@@ -55,19 +55,7 @@ public class Server {
                                     if(socketWrapper.getId() != clientId) socketWrapper.getOutput().println(clientInput);
                                 }
                             }
-
-                            if(Objects.equals("#admin", clientInput)) wrapper.setAdmin();
-                            if(wrapper.isAdmin() && clientInput.startsWith("kick ")) {
-                                long destinationId = Long.parseLong(clientInput.substring(5, 6));
-                                clients.get(destinationId).getOutput().println("Kick");
-                                clients.remove(destinationId);
-                                clients.values().forEach(it -> it.getOutput().println("Клиент[" + destinationId
-                                        + "] отключен администратором"));
-                                break;
-                            }
-
                         }
-
                     }
                 }).start();
             }
@@ -83,7 +71,6 @@ class SocketWrapper implements AutoCloseable {
     private final Socket socket;
     private final Scanner input;
     private final PrintWriter output;
-    private boolean admin = false;
 
     SocketWrapper(long id, Socket socket) throws IOException {
         this.id = id;
@@ -91,8 +78,6 @@ class SocketWrapper implements AutoCloseable {
         this.input = new Scanner(socket.getInputStream());
         this.output = new PrintWriter(socket.getOutputStream(), true);
     }
-
-    public void setAdmin() {admin = true;}
 
     @Override
     public void close() throws Exception {
